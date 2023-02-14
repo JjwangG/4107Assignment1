@@ -13,12 +13,14 @@ class Main{
 
         i.main();
         HashMap<String, HashMap<String, Double>> inverted_index = new HashMap<>();
+        int docNum = i.getNumDocs();
 
         inverted_index = i.getInvertedIndex();
+        
 
         Retrieval r = new Retrieval();
 
-        r.main(inverted_index);
+        r.main(inverted_index, docNum);
 
 
 

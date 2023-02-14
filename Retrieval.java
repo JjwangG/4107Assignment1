@@ -1,8 +1,12 @@
 import java.util.*;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.*;
+import java.io.BufferedWriter;
 
 class Retrieval {
+
+    private static int numDoc;
 
     public static HashMap<String, Double> retrieve(HashMap<String, HashMap<String, Double>> inverted_index, HashMap<String, Double> query, String[] uQueryTerms, HashMap<String, Double> docVL){
         
@@ -14,14 +18,26 @@ class Retrieval {
 
         HashMap<String, Double> doc_scores = new HashMap<>();
 
-        //query vector length
+        // query vector length
         double sum = 0;
 
         for (String qk : query.keySet()){
             sum =  sum + Math.pow(query.get(qk), 2);
         }
 
+        // System.out.println(sum);
         double queryVL = Math.sqrt(sum);
+        
+        // BigDecimal bd;
+        // BigDecimal sum = new BigDecimal("0");
+        // for (String qk : query.keySet()){
+        //     bd = BigDecimal.valueOf(query.get(qk));
+        //     sum = (bd.pow(2)).plus();
+        // }
+
+        // System.out.println(decimalFormat.format(sum));
+
+        // double queryVL = sum.sqrt(new MathContext(20)).doubleValue();
 
 
         for (String word : uQueryTerms){
@@ -71,7 +87,7 @@ class Retrieval {
     public static double idf(String qt, HashMap<String, HashMap<String, Double>> inverted_index){
 
         int occurences = 0; 
-        int numDocs = 1;
+        int numDocs = numDoc;
 
         if (inverted_index.containsKey(qt)){
             // HashMap<String, Integer> docs = inverted_index.get(qt);
@@ -83,9 +99,15 @@ class Retrieval {
 
             // }
             occurences = inverted_index.get(qt).size();
+
+            return (Math.log((double) numDocs/ (double) occurences) / Math.log(2));
+        }
+        else{
+            return 0.0;
         }
 
-        return (Math.log((double) numDocs/ (double) occurences) / Math.log(2));
+
+        
 
     }
 
@@ -190,11 +212,12 @@ class Retrieval {
         String text = entry;
         String filename = "Results.txt";
 
-        try (FileWriter writer = new FileWriter(filename, true)) {
-            writer.write(text);
+        try ( BufferedWriter writerObj = new BufferedWriter(new FileWriter(filename, true))) {
+            writerObj.write(text);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
 
@@ -214,81 +237,11 @@ class Retrieval {
         return sortedHashMap; 
     }
 
-    public static void main(HashMap<String, HashMap<String, Double>> inverted_index) throws Exception{
+    public static void main(HashMap<String, HashMap<String, Double>> inverted_index, int n) throws Exception{
 
-        // HashMap<String, HashMap<String, Integer>> inverted_index = new HashMap<>();
+        numDoc = n;
 
-        // HashMap<String, Integer> angeles_doc = new HashMap<>();
-        // angeles_doc.put("doc3", 1);
-        // // angeles_doc.put("doc2", 0);
-        // // angeles_doc.put("doc1", 0);
-
-        // HashMap<String, Integer> los_doc = new HashMap<>();
-        // los_doc.put("doc3", 1);
-        // // los_doc.put("doc2", 0);
-        // // los_doc.put("doc1", 0);
-
-        // HashMap<String, Integer> new_doc = new HashMap<>();
-        // new_doc.put("doc1", 1);
-        // new_doc.put("doc2", 1);
-        // // new_doc.put("doc3", 0);
-
-        // HashMap<String, Integer> post_doc = new HashMap<>();
-        // post_doc.put("doc2", 1);
-        // // post_doc.put("doc1", 0);
-        // // post_doc.put("doc3", 0);
-
-        // HashMap<String, Integer> times_doc = new HashMap<>();
-        // times_doc.put("doc1", 1);
-        // times_doc.put("doc3", 1);
-        // // times_doc.put("doc2", 0);
-        
-        // HashMap<String, Integer> york_doc = new HashMap<>();
-        // york_doc.put("doc1", 1);
-        // york_doc.put("doc2", 1);
-        // // york_doc.put("doc3", 0);
-
-        
-        // HashMap<HashMap<String, Integer>, Double> angeles = new HashMap<>();
-        // angeles.put(angeles_doc, 1.584);
-
-        // HashMap<HashMap<String, Integer>, Double> los = new HashMap<>();
-        // los.put(los_doc, 1.584);
-
-        // HashMap<HashMap<String, Integer>, Double> new_v = new HashMap<>();
-        // new_v.put(new_doc, 0.584);
-
-        // HashMap<HashMap<String, Integer>, Double> post = new HashMap<>();
-        // post.put(post_doc, 1.584);
-
-        // HashMap<HashMap<String, Integer>, Double> times = new HashMap<>();
-        // times.put(times_doc, 0.584);
-
-        // HashMap<HashMap<String, Integer>, Double> york = new HashMap<>();
-        // york.put(york_doc, 0.584);
-
-
-
-        // inverted_index.put("angeles", angeles_doc);
-        // inverted_index.put("los", los_doc);
-        // inverted_index.put("new", new_doc);
-        // inverted_index.put("post", post_doc);
-        // inverted_index.put("times", times_doc);
-        // inverted_index.put("york", york_doc);
-
-
-        // System.out.println(inverted_index);
-
-        // System.out.println(tf_idf("post", "doc2", inverted_index));
-
-        
-        // HashMap<String, Double> query = new HashMap<>();
-
-        // query.put("new", (2.0/2.0)*(idf("new", inverted_index)));
-        // query.put("times", (1.0/2.0)*(idf("times", inverted_index)));
-
-        // String [] queries = {"new new times", "new york new york", "los angeles times"};
-
+        System.out.println(numDoc);
 
         HashMap<String, Double> docVL = docVL(inverted_index);
 

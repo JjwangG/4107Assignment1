@@ -17,6 +17,8 @@ public class Indexing {
 
     // HashMap< term, HashMap< docNum, frequency>>
     private static HashMap<String, HashMap<String, Double>> FinalMap = new HashMap<>();
+
+    private static int numDocs;
     
 
     public static void mapMaker(String dirDocs, String dirTokens) throws Exception{
@@ -93,6 +95,7 @@ public class Indexing {
       }
 
       ArrayList<ArrayList<String>> f = new ArrayList<ArrayList<String>>();
+      numDocs = subNum.size();
       f.add(subTexts);
       f.add(subNum);
       
@@ -148,6 +151,10 @@ public class Indexing {
         }
 
       }   
+    }
+
+    public int getNumDocs(){
+      return numDocs;
     }
 
     //Final inverted index hash map getter
