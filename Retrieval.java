@@ -35,9 +35,13 @@ class Retrieval {
                         doc_scores.put(doc, 0.0);
                     }
 
-                    double score = doc_scores.get(doc) + cosineSim(doc, word, inverted_index, query, queryVL, docVL);
+                    if(docs.get(doc) != 0){  
+                        double score = doc_scores.get(doc) + cosineSim(doc, word, inverted_index, query, queryVL, docVL);
 
-                    doc_scores.put(doc, score);
+                    // System.out.println(score);
+                        doc_scores.put(doc, score);
+                    }
+                    
                 }
                 //check if doc is in doc_scores table and add if not
                 //calculate cosineSim of doc and term and add to doc_scores
@@ -62,7 +66,15 @@ class Retrieval {
         int numDocs = 3;
 
         if (inverted_index.containsKey(qt)){
-            occurences = inverted_index.get(qt).size();
+            HashMap<String, Integer> docs = inverted_index.get(qt);
+
+            for(String doc : docs.keySet()){
+                if(docs.get(doc) != 0){
+                    occurences++;
+                }
+
+            }
+            // occurences = inverted_index.get(qt).size();
         }
 
         return (Math.log((double) numDocs/ (double) occurences) / Math.log(2));
@@ -109,7 +121,7 @@ class Retrieval {
 
                 double vl = docVL.get(doc) + Math.pow(tf_idf(term, doc, inverted_index), 2);
 
-                System.out.println(term + " " + doc + " " + vl );
+                // System.out.println(term + " " + doc + " " + vl );
 
                 docVL.put(doc, vl);
             }
@@ -145,7 +157,7 @@ class Retrieval {
                 }
             }
             
-            System.out.println(term + " " + occurences);
+            // System.out.println(term + " " + occurences);
 
             double tf = (double) occurences / (double) query.length;
             
@@ -156,30 +168,39 @@ class Retrieval {
 
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws Exception{
 
         HashMap<String, HashMap<String, Integer>> inverted_index = new HashMap<>();
 
         HashMap<String, Integer> angeles_doc = new HashMap<>();
         angeles_doc.put("doc3", 1);
+        angeles_doc.put("doc2", 0);
+        angeles_doc.put("doc1", 0);
 
         HashMap<String, Integer> los_doc = new HashMap<>();
         los_doc.put("doc3", 1);
+        los_doc.put("doc2", 0);
+        los_doc.put("doc1", 0);
 
         HashMap<String, Integer> new_doc = new HashMap<>();
         new_doc.put("doc1", 1);
         new_doc.put("doc2", 1);
+        new_doc.put("doc3", 0);
 
         HashMap<String, Integer> post_doc = new HashMap<>();
         post_doc.put("doc2", 1);
+        post_doc.put("doc1", 0);
+        post_doc.put("doc3", 0);
 
         HashMap<String, Integer> times_doc = new HashMap<>();
         times_doc.put("doc1", 1);
         times_doc.put("doc3", 1);
+        times_doc.put("doc2", 0);
         
         HashMap<String, Integer> york_doc = new HashMap<>();
         york_doc.put("doc1", 1);
         york_doc.put("doc2", 1);
+        york_doc.put("doc3", 0);
 
         
         // HashMap<HashMap<String, Integer>, Double> angeles = new HashMap<>();
@@ -220,20 +241,37 @@ class Retrieval {
         // query.put("new", (2.0/2.0)*(idf("new", inverted_index)));
         // query.put("times", (1.0/2.0)*(idf("times", inverted_index)));
 
-        String queryTerms = "new new times";
+        // String [] queries = {"new new times", "new york new york", "los angeles times"};
 
+        HashMap<String, Double> docVL = docVL(inverted_index);
+
+        GetQueries q = new GetQueries();
+
+        String[] queries = q.readFile("queries.txt");
+
+
+        for (String queryTerms : queries){
+
+            
+
+            // String queryTerms = "new new times";
        
-        Preprocessing p = new Preprocessing();
+            Preprocessing p = new Preprocessing();
 
-        String [] query = queryTerms.split(" ");
+            String [] query = queryTerms.split(" ");
 
-        String [] uQueryTerms = p.tokenize(queryTerms);
+            String [] uQueryTerms = p.tokenize(queryTerms);
 
-        HashMap<String, Double> queryMap = queryMap(query, uQueryTerms, inverted_index);
+            HashMap<String, Double> queryMap = queryMap(query, uQueryTerms, inverted_index);
 
-        System.out.println(queryMap);
+            // System.out.println(queryMap);
 
-        retrieve(inverted_index, queryMap, uQueryTerms, docVL(inverted_index));
+            retrieve(inverted_index, queryMap, uQueryTerms, docVL);
+
+        }
+
+        
+       
 
         // System.out.print(docVL(inverted_index));
 
