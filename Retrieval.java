@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Retrieval {
+class Retrieval {
 
     public static HashMap<String, Double> retrieve(HashMap<String, HashMap<String, Integer>> inverted_index, HashMap<String, Double> query, String[] uQueryTerms, HashMap<String, Double> docVL){
         
@@ -132,21 +132,22 @@ public class Retrieval {
 
     }
 
-    public static HashMap<String, Double> queryMap(String [] queryTerms){
+    public static HashMap<String, Double> queryMap(String[] query, String[] uQueryTerms, HashMap<String, HashMap<String, Integer>> inverted_index){
 
-        String [] uQueryTerms;
         HashMap<String, Double> queryMap = new HashMap<>();
 
         for (String term : uQueryTerms){
 
             int occurences = 0;
-            for(String word : queryTerms){
-                if (term == word){
+            for(String word : query){
+                if (term.equals(word)){
                     occurences++;
                 }
             }
             
-            double tf = occurences / queryTerms.length;
+            System.out.println(term + " " + occurences);
+
+            double tf = (double) occurences / (double) query.length;
             
             queryMap.put(term, tf*(idf(term, inverted_index)));
         }
@@ -214,17 +215,25 @@ public class Retrieval {
         System.out.println(tf_idf("post", "doc2", inverted_index));
 
         
-        HashMap<String, Double> query = new HashMap<>();
+        // HashMap<String, Double> query = new HashMap<>();
 
-        query.put("new", (2.0/2.0)*(idf("new", inverted_index)));
-        query.put("times", (1.0/2.0)*(idf("times", inverted_index)));
+        // query.put("new", (2.0/2.0)*(idf("new", inverted_index)));
+        // query.put("times", (1.0/2.0)*(idf("times", inverted_index)));
 
-        System.out.println(query);
+        String queryTerms = "new new times";
 
+       
+        Preprocessing p = new Preprocessing();
 
-        String[] queryTerms = {"new","times"};
+        String [] query = queryTerms.split(" ");
 
-        retrieve(inverted_index, query, queryTerms, docVL(inverted_index));
+        String [] uQueryTerms = p.tokenize(queryTerms);
+
+        HashMap<String, Double> queryMap = queryMap(query, uQueryTerms, inverted_index);
+
+        System.out.println(queryMap);
+
+        retrieve(inverted_index, queryMap, uQueryTerms, docVL(inverted_index));
 
         // System.out.print(docVL(inverted_index));
 
