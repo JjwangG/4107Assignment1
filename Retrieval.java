@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Retrieval {
 
-    public static HashMap<String, Double> retrieve(HashMap<String, HashMap<String, Integer>> inverted_index, HashMap<String, Double> query, String[] uQueryTerms){
+    public static HashMap<String, Double> retrieve(HashMap<String, HashMap<String, Integer>> inverted_index, HashMap<String, Double> query, String[] uQueryTerms, HashMap<String, Double> docVL){
         
         //create empty hashtable of retrieved docs and score
         //loop through unique query terms
@@ -11,6 +11,16 @@ public class Retrieval {
         //calculate cosineSim with corresponding docs idf of term and add to hashtable
 
         HashMap<String, Double> doc_scores = new HashMap<>();
+
+        //query vector length
+        double sum = 0;
+
+        for (String qk : query.keySet()){
+            sum =  sum + Math.pow(query.get(qk), 2);
+        }
+
+        double queryVL = Math.sqrt(sum);
+
 
         for (String word : uQueryTerms){
 
@@ -25,7 +35,9 @@ public class Retrieval {
                         doc_scores.put(doc, 0.0);
                     }
 
-                    // doc_scores.put(doc, cosineSimilarity())
+                    double score = doc_scores.get(doc) + cosineSim(doc, word, inverted_index, query, queryVL, docVL);
+
+                    doc_scores.put(doc, score);
                 }
                 //check if doc is in doc_scores table and add if not
                 //calculate cosineSim of doc and term and add to doc_scores
@@ -71,9 +83,52 @@ public class Retrieval {
     }
     
     //calculate cosine similarity of query word and doc
-    public static double cosineSimilarity(double doc_weight, double q_weight, double len_doc, double len_q){
+    public static double cosineSim(String doc, String word, HashMap<String, HashMap<String, Integer>> inverted_index, HashMap<String, Double> query, double query_VL, HashMap<String, Double> docVL){
 
-        return (doc_weight*q_weight) / (len_doc * len_q);
+        double tf_idf_word = tf_idf(word, doc, inverted_index);
+        double tf_idf_queryT = query.get(word);
+        double vl = docVL.get(doc);
+
+        return (tf_idf_word * tf_idf_queryT) / (vl * query_VL) ;
+
+    }
+
+    public static HashMap<String, Double> docVL(HashMap<String, HashMap<String, Integer>> inverted_index){
+
+        HashMap<String, Double> docVL = new HashMap<>();
+
+        for (String term : inverted_index.keySet()){
+            //retrieve docs that query term is in
+            HashMap<String, Integer> docs = inverted_index.get(term);
+
+            //iterate through doc occurences
+            for ( String doc : docs.keySet() ) {
+                if(!(docVL.containsKey(doc))){
+                    docVL.put(doc, 0.0);
+                }
+
+                double vl = docVL.get(doc) + Math.pow(tf_idf(term, doc, inverted_index), 2);
+
+                System.out.println(term + " " + doc + " " + vl );
+
+                docVL.put(doc, vl);
+            }
+            //check if doc is in doc_scores table and add if not
+            //calculate cosineSim of doc and term and add to doc_score
+            
+        } 
+
+        //square root all
+        for (String doc : docVL.keySet()){
+
+            double sqrt = Math.sqrt(docVL.get(doc));
+            docVL.put(doc, sqrt);
+        }
+
+        return docVL;
+
+
+
 
     }
 
@@ -100,6 +155,7 @@ public class Retrieval {
         
         HashMap<String, Integer> york_doc = new HashMap<>();
         york_doc.put("doc1", 1);
+        york_doc.put("doc2", 1);
 
         
         // HashMap<HashMap<String, Integer>, Double> angeles = new HashMap<>();
@@ -142,9 +198,14 @@ public class Retrieval {
 
         System.out.println(query);
 
-        String[] queryTerms = {"new","new", "times"};
 
-        retrieve(inverted_index, query, queryTerms);
+        String[] queryTerms = {"new","times"};
+
+        retrieve(inverted_index, query, queryTerms, docVL(inverted_index));
+
+        // System.out.print(docVL(inverted_index));
+
+
 
 
     }
