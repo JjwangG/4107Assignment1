@@ -57,7 +57,7 @@ class Preprocessing{
     //output: all the punctuation removed
     public static String removePunct(String data) {
         //replace all the punctuation except for $, hypens, and decimal points
-        data = data.replaceAll("[^-$a-z0-9\\d+\\.\\d+\\s]", "").replaceAll("(?!\\d)\\.(?!\\d)", "").replaceAll("\\s+", " ");
+        data = data.replaceAll("[^-/$a-z0-9\\d+\\.\\d+\\s]", "").replaceAll("(?!\\d)\\.(?!\\d)", "").replaceAll("\\s+", " ").replaceAll("/", " ");
         return data;
     }
 
