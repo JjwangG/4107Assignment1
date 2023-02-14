@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,6 +17,8 @@ public class Indexing {
 
     // HashMap< term, HashMap< docNum, frequency>>
     private static HashMap<String, HashMap<String, Double>> FinalMap = new HashMap<>();
+
+    private static int booty = 0;
     
 
     public static void mapMaker(String dirDocs, String dirTokens) throws Exception{
@@ -37,7 +41,8 @@ public class Indexing {
               buildMap(data.get(0), tok, data.get(1));
             }
         }
-        System.out.println(FinalMap);
+        System.out.println(booty);
+        //System.out.println(FinalMap);
     }
 
     //input: filename of a single file ex.AP880121
@@ -93,6 +98,8 @@ public class Indexing {
       ArrayList<ArrayList<String>> f = new ArrayList<ArrayList<String>>();
       f.add(subTexts);
       f.add(subNum);
+
+      booty += subNum.size();
       
       return f;
   }
@@ -129,28 +136,42 @@ public class Indexing {
         for (int i = 0; i < subDoc.size() ; i++) {
             
             counter = subDoc.get(i).split((" "+word+" "), -1).length-1;
-            
-          //check if token is already in FinalMap
-            if (FinalMap == null || !FinalMap.containsKey(word)){
-            //add new word with hm(filename, freq) to the FinalMap
+            if (counter != 0){
+              //check if token is already in FinalMap
+              if (FinalMap == null || !FinalMap.containsKey(word)){
+                //add new word with hm(filename, freq) to the FinalMap
                 HashMap<String, Double> singlFre = new HashMap<>();
-                singlFre.put(fileNames.get(i) , (double) (counter));
-            ///(subDoc.get(i).split(" ").length))
+                singlFre.put(fileNames.get(i) ,  ((double)counter/(double)(subDoc.get(i).split(" ").length)));
+                ///(subDoc.get(i).split(" ").length))
                 FinalMap.put(word, singlFre);
-            } else {
-            //add on hm(filename, freq) to existing token entry
-                FinalMap.get(word).put(fileNames.get(i), (double) (counter));
-            }
-            counter = 0;
+              } else {
+              //add on hm(filename, freq) to existing token entry
+                  FinalMap.get(word).put(fileNames.get(i), ((double)counter/(double)(subDoc.get(i).split(" ").length)));
+              }
+              counter = 0;
+          }
         }
 
       }   
     }
 
-
+    //Final inverted index hash map getter
+    public HashMap<String, HashMap<String, Double>> getInvertedIndex(){
+      return FinalMap;
+    }
       
     public static void main(String[] args) throws Exception {
-        mapMaker("test", "words.txt");
+        mapMaker("docs", "tokens.txt");
+
+        try {
+          BufferedWriter writerObj = new BufferedWriter(new FileWriter("invertedIndex.txt", false));
+          writerObj.write(FinalMap.toString());
+          writerObj.close();
+          System.out.println("================================\n"
+                  + "Inverted Index successfully generated");
+      } catch (IOException e) {
+          e.printStackTrace();
+      }
       }
 
 }
