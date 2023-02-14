@@ -36,12 +36,12 @@ public class Indexing {
             if (file.isFile()) {
               //clean 1 file
               data = readFile(dirDocs+ "/" + file.getName());
-              //System.out.println(data);
+              //System.out.println(data.get(0));
               //put into build map to iterate through the single file
               buildMap(data.get(0), tok, data.get(1));
             }
         }
-        //System.out.println(FinalMap);
+        System.out.println(FinalMap);
     }
 
     //input: filename of a single file ex.AP880121
@@ -53,38 +53,49 @@ public class Indexing {
       data = data.replaceAll("\n", " ").replaceAll("\r", " ");
 
       //arrayList containing each seperate sub text as strings
+      ArrayList<String> documents = new ArrayList<>();
+
+      Pattern docPattern = Pattern.compile("<DOC>(.*?)</DOC>");
+      Matcher matcher = docPattern.matcher(data);
+
+      while(matcher.find()){
+        documents.add(matcher.group(1));
+      }
+
+      
+
+      //arrayList containing each seperate sub text as strings
       ArrayList<String> subTexts = new ArrayList<>();
 
       //arrayList containing each seperate sub text's document number
       ArrayList<String> subNum = new ArrayList<>();
 
       Pattern p = Pattern.compile("<TEXT>(.*?)</TEXT>");
-      Matcher matcher = p.matcher(data);
+      Pattern p2 = Pattern.compile("<DOCNO>(.*?)</DOCNO>");
+      Matcher matcher2;
 
       String temp = "";
-      int counter = 0;
-      while(matcher.find()){
-        temp = matcher.group(1).toLowerCase();
-        temp = proc.removeStopWords(temp);
-        temp = proc.removePunct(temp);
-        subTexts.add(temp);
-        counter++;
-      }
-      System.out.println(counter);
+      String temp2 = "";
+      for(int i = 0; i<documents.size(); i++){
+        matcher = p.matcher(documents.get(i));
+        matcher2 = p2.matcher(documents.get(i));
+        temp = documents.get(i); //whole subdoc -> needs to be split
+        while(matcher2.find()){
+            subNum.add(matcher2.group(1));
+        }
 
-      Pattern p2 = Pattern.compile("<DOCNO>(.*?)</DOCNO>");
-      Matcher matcher2 = p2.matcher(data);
-
-      while(matcher2.find()){
-        temp = matcher2.group(1);
-        subNum.add(temp);
+        while(matcher.find()){
+            temp = matcher.group(1).toLowerCase();
+            temp = proc.removeStopWords(temp);
+            temp = proc.removePunct(temp);
+            temp2 += temp;
+        }
+        subTexts.add(temp2);
       }
 
       ArrayList<ArrayList<String>> f = new ArrayList<ArrayList<String>>();
       f.add(subTexts);
       f.add(subNum);
-      
-      System.out.println(subNum.size() + " -- " + subTexts.size());
       
       return f;
   }
@@ -116,7 +127,7 @@ public class Indexing {
     //input: stringArray is one text from a document with each word seperated
     //output: HashMap< docNum, frequency>
     public static void buildMap (ArrayList<String> subDoc, String[] tokens , ArrayList<String> fileNames){
-      
+      int count =0;
       int counter = 0;
       for (String word : tokens) {
         for (int i = 0; i < subDoc.size() ; i++) {
@@ -126,22 +137,29 @@ public class Indexing {
           if (FinalMap == null || !FinalMap.containsKey(word)){
             //add new word with hm(filename, freq) to the FinalMap
             HashMap<String, Double> singlFre = new HashMap<>();
-            singlFre.put(fileNames.get(i) , (double) (counter/(subDoc.get(i).split(" ").length)));
+            singlFre.put(fileNames.get(i) , (double) (counter));
+            ///(subDoc.get(i).split(" ").length))
             FinalMap.put(word, singlFre);
             counter = 0;
           } else {
             //add on hm(filename, freq) to existing token entry
-            FinalMap.get(word).put(fileNames.get(i), (double) (counter/(subDoc.get(i).split(" ").length)));
+            FinalMap.get(word).put(fileNames.get(i), (double) (counter));
             counter = 0;
           }
-          }
         }
+
+        //System.out.println(count++);
+
       }
+        
+        
+    }
+      
 
 
       
     public static void main(String[] args) throws Exception {
-        mapMaker("test", "tokens.txt");
+        mapMaker("test", "words.txt");
       }
 
 }
