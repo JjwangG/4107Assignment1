@@ -132,6 +132,29 @@ public class Retrieval {
 
     }
 
+    public static HashMap<String, Double> queryMap(String [] queryTerms){
+
+        String [] uQueryTerms;
+        HashMap<String, Double> queryMap = new HashMap<>();
+
+        for (String term : uQueryTerms){
+
+            int occurences = 0;
+            for(String word : queryTerms){
+                if (term == word){
+                    occurences++;
+                }
+            }
+            
+            double tf = occurences / queryTerms.length;
+            
+            queryMap.put(term, tf*(idf(term, inverted_index)));
+        }
+
+        return queryMap;
+
+    }
+
     public static void main(String[] args){
 
         HashMap<String, HashMap<String, Integer>> inverted_index = new HashMap<>();
