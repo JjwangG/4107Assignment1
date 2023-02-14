@@ -73,8 +73,8 @@ class Preprocessing{
     //output: string of the text with all the stop words removed
     public static String removeStopWords(String data) throws Exception{
         String [] stopArray = initialiseArray(); 
-        for (String word : stopArray) {
-            data = data.replace((" "+ word+" "), " ");
+        for (String word : stopArray) { 
+            data = data.replace(("\\b"+ word+"\\b"), " ");
         }
 
         return data;
