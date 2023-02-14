@@ -308,7 +308,7 @@ class Retrieval {
             int rank = 1;
             for(String i : results.keySet()){
 
-                String entry = (queryNum + " " + i + " " + rank + " " + results.get(i) + " " + "bitch" + "\n");
+                String entry = (queryNum + " " + i + " " + rank + " " + results.get(i) + " " + "my_search" + "\n");
                 WriteTextToFile(entry);
                 rank++;
 
