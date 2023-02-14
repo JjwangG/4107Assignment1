@@ -8,12 +8,17 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 class Preprocessing{
 
-    public static void main(String[] args) throws Exception{ 
+    public static void main() throws Exception{ 
         
         String data = readAllFiles();
+
+        System.out.println("STILL ALIVE.");
         data = removeStopWords(data);
+        System.out.println("STILL ALIVE.");
         data = removePunct(data);
+        System.out.println("STILL ALIVE.");
         String[] tokens = tokenize(data);
+        System.out.println("STILL ALIVE.");
          
         try {
             BufferedWriter writerObj = new BufferedWriter(new FileWriter("tokens.txt", false));
@@ -73,8 +78,10 @@ class Preprocessing{
     //output: string of the text with all the stop words removed
     public static String removeStopWords(String data) throws Exception{
         String [] stopArray = initialiseArray(); 
+        Pattern p;
         for (String word : stopArray) { 
-            data = data.replaceAll(("\\b"+ word+"\\b"), " ");
+            p = Pattern.compile("\\b"+ word+"\\b");
+            data = p.matcher(data).replaceAll("");
         }
 
         return data;
@@ -92,7 +99,7 @@ class Preprocessing{
 
     //parses through all the documents in the doc folder
     private static String readAllFiles() throws Exception{
-        String path = "docs";
+        String path = "test";
         String data = "";
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
