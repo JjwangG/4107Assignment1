@@ -17,8 +17,6 @@ public class Indexing {
 
     // HashMap< term, HashMap< docNum, frequency>>
     private static HashMap<String, HashMap<String, Double>> FinalMap = new HashMap<>();
-
-    private static int booty = 0;
     
 
     public static void mapMaker(String dirDocs, String dirTokens) throws Exception{
@@ -41,7 +39,6 @@ public class Indexing {
               buildMap(data.get(0), tok, data.get(1));
             }
         }
-        System.out.println(booty);
         //System.out.println(FinalMap);
     }
 
@@ -98,8 +95,6 @@ public class Indexing {
       ArrayList<ArrayList<String>> f = new ArrayList<ArrayList<String>>();
       f.add(subTexts);
       f.add(subNum);
-
-      booty += subNum.size();
       
       return f;
   }
@@ -160,8 +155,8 @@ public class Indexing {
       return FinalMap;
     }
       
-    public static void main(String[] args) throws Exception {
-        mapMaker("docs", "tokens.txt");
+    public static void main() throws Exception {
+        mapMaker("test", "tokens.txt");
 
         try {
           BufferedWriter writerObj = new BufferedWriter(new FileWriter("invertedIndex.txt", false));
