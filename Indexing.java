@@ -7,22 +7,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class Indexing {
 
-  // computer = {text2= 5, text3 =9}
     // HashMap< term, HashMap< docNum, frequency>>
     private static HashMap<String, HashMap<String, Double>> FinalMap = new HashMap<>();
     
 
     public static void mapMaker(String dirDocs, String dirTokens) throws Exception{
-      //String path = "docs";
+
       //arraylist with single document including all sub
         ArrayList<ArrayList<String>> data = new ArrayList<>();
         String[] tok;
@@ -36,7 +32,7 @@ public class Indexing {
             if (file.isFile()) {
               //clean 1 file
               data = readFile(dirDocs+ "/" + file.getName());
-              //System.out.println(data.get(0));
+
               //put into build map to iterate through the single file
               buildMap(data.get(0), tok, data.get(1));
             }
@@ -91,6 +87,7 @@ public class Indexing {
             temp2 += temp;
         }
         subTexts.add(temp2);
+        temp2="";
       }
 
       ArrayList<ArrayList<String>> f = new ArrayList<ArrayList<String>>();
@@ -127,34 +124,28 @@ public class Indexing {
     //input: stringArray is one text from a document with each word seperated
     //output: HashMap< docNum, frequency>
     public static void buildMap (ArrayList<String> subDoc, String[] tokens , ArrayList<String> fileNames){
-      int count =0;
       int counter = 0;
       for (String word : tokens) {
         for (int i = 0; i < subDoc.size() ; i++) {
-          counter = subDoc.get(i).split(word, -1).length-1;
-          
+            
+            counter = subDoc.get(i).split((" "+word+" "), -1).length-1;
+            
           //check if token is already in FinalMap
-          if (FinalMap == null || !FinalMap.containsKey(word)){
+            if (FinalMap == null || !FinalMap.containsKey(word)){
             //add new word with hm(filename, freq) to the FinalMap
-            HashMap<String, Double> singlFre = new HashMap<>();
-            singlFre.put(fileNames.get(i) , (double) (counter));
+                HashMap<String, Double> singlFre = new HashMap<>();
+                singlFre.put(fileNames.get(i) , (double) (counter));
             ///(subDoc.get(i).split(" ").length))
-            FinalMap.put(word, singlFre);
-            counter = 0;
-          } else {
+                FinalMap.put(word, singlFre);
+            } else {
             //add on hm(filename, freq) to existing token entry
-            FinalMap.get(word).put(fileNames.get(i), (double) (counter));
+                FinalMap.get(word).put(fileNames.get(i), (double) (counter));
+            }
             counter = 0;
-          }
         }
 
-        //System.out.println(count++);
-
-      }
-        
-        
+      }   
     }
-      
 
 
       
