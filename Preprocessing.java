@@ -1,41 +1,52 @@
 import java.nio.file.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Arrays;
+import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.IOException;
 class Preprocessing{
 
     private static String [] stopArray; 
     public static void main(String[] args) throws Exception{ 
         
-        String data = readFile("/Users/joannawang/Projects/4107Assignment1/docs/AP880212");
-        
-        initialiseArray();
-        
-        data = removeStopWords(data);
+        String data = readAllFiles();
         //System.out.print(data);
 
-        /*TO DO 
-         * remove punctuation
-         * maybe have to deal with capitals -> I thinkn all lowercase shouldn't matter?
-         * pretty much done
-         */
-
-        /* 
-        String[] tokens = tokenize(data);
-
+        initialiseArray();
         
+        
+        data = removeStopWords(data);
+        data = removePunct(data);
+        String[] tokens = tokenize(data);
+         
+        try {
+            BufferedWriter writerObj = new BufferedWriter(new FileWriter("tokens.txt", false));
+            for (String string : tokens) {
+                writerObj.write(string);
+                writerObj.newLine();
+            }
+            writerObj.close();
+            System.out.println("================================\n"
+                    + "Tokens successfully generated");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //System.out.println(duplicates(tokens));
+        /* 
         for (String str : tokens) {
             System.out.println(str);
         }*/
         
     }
 
-    //returns a string with just the text and head
+    //returns a string with just the text and head contents in lower case, 
     public static String readFile(String fileName) throws Exception{
         String data = "";
         String text = "";
         data = new String(Files.readAllBytes(Paths.get(fileName)));
-        data = data.replace("\n", " ").replace("\r", " ");
+        data = data.replaceAll("\n", " ").replaceAll("\r", " ");
 
         Pattern p = Pattern.compile("<TEXT>(.*?)</TEXT>");
         Matcher matcher = p.matcher(data);
@@ -51,7 +62,15 @@ class Preprocessing{
             text += (matcher2.group(1) + "\n");
         }
 
-        return text;
+        return text.toLowerCase();
+    }
+
+    //input: string of all the text
+    //output: all the punctuation removed
+    private static String removePunct(String data) {
+        //replace all the punctuation except for $, hypens, and decimal points
+        data = data.replaceAll("[^-$a-z0-9\\d+\\.\\d+\\s]", "").replaceAll("(?!\\d)\\.(?!\\d)", "").replaceAll("\\s+", " ");
+        return data;
     }
 
     //input: string of text
@@ -74,17 +93,23 @@ class Preprocessing{
 
     private static void initialiseArray() throws Exception{
         String data = "";
-        String data2 = "";
         data = new String(Files.readAllBytes(Paths.get("/Users/joannawang/Projects/4107Assignment1/ss.txt")));
         data = data.replace("\n", " ").replace("\r", " ");
         stopArray = data.split(" ");
     }
 
-    /*
-     * classes for tokenization, stop word removal, stemming (not necessary)
-     * add stop words
-     * hm
+    private static String readAllFiles() throws Exception{
+        String path = "docs";
+        String data = "";
+        File folder = new File(path);
+        File[] listOfFiles = folder.listFiles();
 
-     *
-     */
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+                data += readFile(path+ "/" + file.getName());
+                //System.out.println(file.getName());
+            }
+        }
+        return data;
+    }
 }
