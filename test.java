@@ -2,13 +2,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class test {
     // HashMap< term, HashMap< HashMap< docNum, occurence>, idf>>
     private HashMap<String, HashMap<String, Integer>> FinalMap;
+
+    public test() {
+        FinalMap = new HashMap<>();
+      }
 
     public void buildMap(String docsDir, String wordsDir){
 
@@ -26,25 +32,25 @@ public class test {
                 BufferedReader br = new BufferedReader(new FileReader(dirW));
                 String line;
                 String indWord;
-                while ((indWord = br.readLine()) != null){
-                    //System.out.println(indWord);
-                    while ((line = reader.readLine()) != null) {
-                    String[] words = line.split("\\s+");
-                    for (String word : words) {
-                        word = word.toLowerCase();
-                        System.out.println(word);
-                        System.out.println("HELOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-                        /*HashMap<String, Integer> frequencyMap = FinalMap.get(word);
-                        if (frequencyMap == null) {
-                        frequencyMap = new HashMap<>();
-                        FinalMap.put(word, frequencyMap);
-                        }
-                        Integer frequency = frequencyMap.get(file.getName());
-                        if (frequency == null) {
-                        frequency = 0;
-                        }
-                        frequencyMap.put(file.getName(), frequency + 1);
-                    */}
+                
+                while ((line = reader.readLine()) != null) {
+                    while ((indWord = br.readLine()) != null){
+                        String[] words = line.split("\\s+");
+                        for (String word : words) {
+                            word = word.toLowerCase();
+                            word = word.replaceAll("[^-$a-z0-9\\d+\\.\\d+\\s]", "").replaceAll("(?!\\d)\\.(?!\\d)", "").replaceAll("\\s+", " ");
+                            HashMap<String, Integer> frequencyMap = FinalMap.get(indWord);
+                            if (frequencyMap == null) {
+                            frequencyMap = new HashMap<>();
+                            FinalMap.put(indWord, frequencyMap);
+                            }
+                            Integer frequency = frequencyMap.get(file.getName());
+                            if (frequency == null) {
+                            frequency = 0;
+                            }
+                            frequencyMap.put(file.getName(), frequency + 1);
+                    }
+                    //System.out.println(FinalMap);
                     }
                     
                     
@@ -57,14 +63,28 @@ public class test {
             }
         }
 
+
+        public HashMap<String, Integer> getDocumentFrequency(String word) {
+          return FinalMap.get(word.toLowerCase());
+        }
+      
+        public List<String> getDocuments(String word) {
+          HashMap<String, Integer> frequencyMap = getDocumentFrequency(word);
+          if (frequencyMap == null) {
+            return new ArrayList<>();
+          }
+          Set<String> documentSet = frequencyMap.keySet();
+          return new ArrayList<>(documentSet);
+        }
+
     public static void main(String[] args) {
         test index = new test();
         index.buildMap("docs", "words.txt");
         
-        //Map<String, List> frequencyMap = index.getDocumentFrequency("word");
+        HashMap<String, Integer> frequencyMap = index.getDocumentFrequency("word");
         //System.out.println(frequencyMap);
-        //List<String> documents = index.getDocuments("word");
-        //System.out.println(documents);
+        List<String> documents = index.getDocuments("word");
+        System.out.println(documents);
       }
 
 }
