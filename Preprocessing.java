@@ -8,15 +8,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 class Preprocessing{
 
-    private static String [] stopArray; 
     public static void main(String[] args) throws Exception{ 
         
         String data = readAllFiles();
-        //System.out.print(data);
-
-        initialiseArray();
-        
-        
         data = removeStopWords(data);
         data = removePunct(data);
         String[] tokens = tokenize(data);
@@ -33,12 +27,6 @@ class Preprocessing{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //System.out.println(duplicates(tokens));
-        /* 
-        for (String str : tokens) {
-            System.out.println(str);
-        }*/
-        
     }
 
     //returns a string with just the text and head contents in lower case, 
@@ -67,7 +55,7 @@ class Preprocessing{
 
     //input: string of all the text
     //output: all the punctuation removed
-    private static String removePunct(String data) {
+    public static String removePunct(String data) {
         //replace all the punctuation except for $, hypens, and decimal points
         data = data.replaceAll("[^-$a-z0-9\\d+\\.\\d+\\s]", "").replaceAll("(?!\\d)\\.(?!\\d)", "").replaceAll("\\s+", " ");
         return data;
@@ -75,7 +63,7 @@ class Preprocessing{
 
     //input: string of text
     //output: array of all the tokens 
-    private static String[] tokenize(String data){
+    public static String[] tokenize(String data){
         String[] arr = data.split("\\s+");
         String[]unique = Arrays.stream(arr).distinct().toArray(String[]::new);
         return unique;
@@ -83,7 +71,8 @@ class Preprocessing{
 
     //input: string of all the texts
     //output: string of the text with all the stop words removed
-    private static String removeStopWords(String data){
+    public static String removeStopWords(String data) throws Exception{
+        String [] stopArray = initialiseArray(); 
         for (String word : stopArray) {
             data = data.replace((" "+ word+" "), " ");
         }
@@ -91,13 +80,17 @@ class Preprocessing{
         return data;
     }
 
-    private static void initialiseArray() throws Exception{
+    //initializes the stopwords array
+    private static String[] initialiseArray() throws Exception{
         String data = "";
-        data = new String(Files.readAllBytes(Paths.get("/Users/joannawang/Projects/4107Assignment1/ss.txt")));
+        String[]arr;
+        data = new String(Files.readAllBytes(Paths.get("ss.txt")));
         data = data.replace("\n", " ").replace("\r", " ");
-        stopArray = data.split(" ");
+        arr = data.split(" ");
+        return arr;
     }
 
+    //parses through all the documents in the doc folder
     private static String readAllFiles() throws Exception{
         String path = "docs";
         String data = "";
