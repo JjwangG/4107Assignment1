@@ -1,0 +1,67 @@
+<top>
+
+<num>1
+
+
+<title>Coping with overcrowded prisons
+
+<desc>
+
+The document will provide information on jail and prison overcrowding and 
+how inmates are forced to cope with those conditions; or it will reveal 
+plans to relieve the overcrowded condition.
+
+<narr>
+
+A relevant document will describe scenes of overcrowding that have 
+become all too common in jails and prisons around the country.  The 
+document will identify how inmates are forced to cope with those 
+overcrowded conditions, and/or what the Correctional System is doing, 
+or planning to do, to alleviate the crowded condition.
+
+</top>
+
+<top>
+
+<num>2
+
+
+<title>Accusations of Cheating by Contractors on U.S. Defense Projects
+
+<desc>
+
+Document will refer to an alleged illegality committed by any entity 
+seeking a contract on behalf of the U.S. Military Forces.
+
+<narr>
+
+A relevant document will mention an alleged impropriety or improprieties 
+by individuals or entities (companies, corporations), either domestic or 
+foreign, attempting to provide services or products related to the U.S. 
+military effort.  To be relevant, document will specifically:
+
+(1) identify the wrongdoer, and
+(2) describe in at least general terms (e.g., overcharging, bribing, 
+swindling, illegal gifts, bid-riggings found, insider information) the 
+nature of the wrongdoing.
+
+
+</top>
+<top>
+
+<num>3
+
+
+<title>Insurance Coverage which pays for Long Term Care
+
+<desc>
+
+Document will discuss insurance coverage for long term care confinements.
+
+<narr>
+
+A relevant document will discuss an existing or proposed insurance 
+plan (governmental, commercial or individual) and the coverage it 
+provides for long term care confinements in an institution or home care.
+
+</top>
