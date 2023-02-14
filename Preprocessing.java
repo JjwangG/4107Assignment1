@@ -74,7 +74,7 @@ class Preprocessing{
     public static String removeStopWords(String data) throws Exception{
         String [] stopArray = initialiseArray(); 
         for (String word : stopArray) { 
-            data = data.replace(("\\b"+ word+"\\b"), " ");
+            data = data.replaceAll(("\\b"+ word+"\\b"), " ");
         }
 
         return data;
