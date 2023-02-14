@@ -2,71 +2,146 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class Indexing {
-  private Map<String, Map<String, Integer>> index;
 
-  public Indexing() {
-    index = new HashMap<>();
+  // computer = {text2= 5, text3 =9}
+    // HashMap< term, HashMap< docNum, frequency>>
+    private static HashMap<String, HashMap<String, Double>> FinalMap = new HashMap<>();
+    
+
+    public static void mapMaker(String dirDocs, String dirTokens) throws Exception{
+      //String path = "docs";
+      //arraylist with single document including all sub
+        ArrayList<ArrayList<String>> data = new ArrayList<>();
+        String[] tok;
+        File folder = new File(dirDocs);
+        File[] listOfFiles = folder.listFiles();
+
+        //clean tokens file
+        tok = cleanTokens(dirTokens);
+
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+              //clean 1 file
+              data = readFile(dirDocs+ "/" + file.getName());
+              //System.out.println(data);
+              //put into build map to iterate through the single file
+              buildMap(data.get(0), tok, data.get(1));
+            }
+        }
+        //System.out.println(FinalMap);
+    }
+
+    //input: filename of a single file ex.AP880121
+    //output: arrayList that contains each subtext with just the text and head contents in lower case
+    public static ArrayList<ArrayList<String>> readFile(String fileName) throws Exception{
+      Preprocessing proc = new Preprocessing();
+      String data = "";
+      data = new String(Files.readAllBytes(Paths.get(fileName)));
+      data = data.replaceAll("\n", " ").replaceAll("\r", " ");
+
+      //arrayList containing each seperate sub text as strings
+      ArrayList<String> subTexts = new ArrayList<>();
+
+      //arrayList containing each seperate sub text's document number
+      ArrayList<String> subNum = new ArrayList<>();
+
+      Pattern p = Pattern.compile("<TEXT>(.*?)</TEXT>");
+      Matcher matcher = p.matcher(data);
+
+      String temp = "";
+      int counter = 0;
+      while(matcher.find()){
+        temp = matcher.group(1).toLowerCase();
+        temp = proc.removeStopWords(temp);
+        temp = proc.removePunct(temp);
+        subTexts.add(temp);
+        counter++;
+      }
+      System.out.println(counter);
+
+      Pattern p2 = Pattern.compile("<DOCNO>(.*?)</DOCNO>");
+      Matcher matcher2 = p2.matcher(data);
+
+      while(matcher2.find()){
+        temp = matcher2.group(1);
+        subNum.add(temp);
+      }
+
+      ArrayList<ArrayList<String>> f = new ArrayList<ArrayList<String>>();
+      f.add(subTexts);
+      f.add(subNum);
+      
+      System.out.println(subNum.size() + " -- " + subTexts.size());
+      
+      return f;
+  }
+    
+
+  public static String[] cleanTokens (String dir){
+    File dirD = new File(dir);
+    ArrayList<String> tokens = new ArrayList<String>();
+    try {
+      BufferedReader br = new BufferedReader(new FileReader(dirD));
+      String line;
+      
+      while ((line = br.readLine()) != null) {
+        tokens.add(line);
+      }
+      br.close();  
+      
+    } catch (IOException e) {
+      System.err.println("An error occurred while reading the file: " + e.getMessage());
+    }
+
+    Object[] arr = tokens.toArray();
+    String[] t = Arrays.copyOf(arr, arr.length, String[].class);
+    
+    return t;
   }
 
-  public void buildIndex(String directory) {
-    //System.out.println(directory);
-    File dir = new File(directory);
-    for (File file : dir.listFiles()) {
-      if (!file.isFile()) {
-        continue;
-      }
-      try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-          String[] words = line.split("\\s+");
-          for (String word : words) {
-            word = word.toLowerCase();
-            Map<String, Integer> frequencyMap = index.get(word);
-            if (frequencyMap == null) {
-              frequencyMap = new HashMap<>();
-              index.put(word, frequencyMap);
-            }
-            Integer frequency = frequencyMap.get(file.getName());
-            if (frequency == null) {
-              frequency = 0;
-            }
-            frequencyMap.put(file.getName(), frequency + 1);
+
+    //input: stringArray is one text from a document with each word seperated
+    //output: HashMap< docNum, frequency>
+    public static void buildMap (ArrayList<String> subDoc, String[] tokens , ArrayList<String> fileNames){
+      
+      int counter = 0;
+      for (String word : tokens) {
+        for (int i = 0; i < subDoc.size() ; i++) {
+          counter = subDoc.get(i).split(word, -1).length-1;
+          
+          //check if token is already in FinalMap
+          if (FinalMap == null || !FinalMap.containsKey(word)){
+            //add new word with hm(filename, freq) to the FinalMap
+            HashMap<String, Double> singlFre = new HashMap<>();
+            singlFre.put(fileNames.get(i) , (double) (counter/(subDoc.get(i).split(" ").length)));
+            FinalMap.put(word, singlFre);
+            counter = 0;
+          } else {
+            //add on hm(filename, freq) to existing token entry
+            FinalMap.get(word).put(fileNames.get(i), (double) (counter/(subDoc.get(i).split(" ").length)));
+            counter = 0;
+          }
           }
         }
-      } catch (IOException e) {
-        System.err.println("An error occurred while reading the file: " + e.getMessage());
       }
-    }
-  }
 
-  public Map<String, Integer> getDocumentFrequency(String word) {
-    return index.get(word.toLowerCase());
-  }
 
-  public List<String> getDocuments(String word) {
-    Map<String, Integer> frequencyMap = getDocumentFrequency(word);
-    if (frequencyMap == null) {
-      return new ArrayList<>();
-    }
-    Set<String> documentSet = frequencyMap.keySet();
-    return new ArrayList<>(documentSet);
-  }
+      
+    public static void main(String[] args) throws Exception {
+        mapMaker("test", "tokens.txt");
+      }
 
-  public static void main(String[] args) {
-    Indexing index = new Indexing();
-    index.buildIndex("docs");
-    
-    Map<String, Integer> frequencyMap = index.getDocumentFrequency("word");
-    System.out.println(frequencyMap);
-    List<String> documents = index.getDocuments("word");
-    System.out.println(documents);
-  }
 }
