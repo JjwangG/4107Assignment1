@@ -12,13 +12,13 @@ class Preprocessing{
         
         String data = readAllFiles();
 
-        System.out.println("STILL ALIVE.");
+        
         data = removeStopWords(data);
-        System.out.println("STILL ALIVE.");
+        
         data = removePunct(data);
-        System.out.println("STILL ALIVE.");
+       
         String[] tokens = tokenize(data);
-        System.out.println("STILL ALIVE.");
+        
          
         try {
             BufferedWriter writerObj = new BufferedWriter(new FileWriter("tokens.txt", false));
@@ -99,7 +99,7 @@ class Preprocessing{
 
     //parses through all the documents in the doc folder
     private static String readAllFiles() throws Exception{
-        String path = "test";
+        String path = "docs";
         String data = "";
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();

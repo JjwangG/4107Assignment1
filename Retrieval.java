@@ -27,17 +27,6 @@ class Retrieval {
 
         // System.out.println(sum);
         double queryVL = Math.sqrt(sum);
-        
-        // BigDecimal bd;
-        // BigDecimal sum = new BigDecimal("0");
-        // for (String qk : query.keySet()){
-        //     bd = BigDecimal.valueOf(query.get(qk));
-        //     sum = (bd.pow(2)).plus();
-        // }
-
-        // System.out.println(decimalFormat.format(sum));
-
-        // double queryVL = sum.sqrt(new MathContext(20)).doubleValue();
 
 
         for (String word : uQueryTerms){
@@ -52,13 +41,6 @@ class Retrieval {
                     if(!(doc_scores.containsKey(doc))){
                         doc_scores.put(doc, 0.0);
                     }
-
-                    // if(docs.get(doc) != 0){  
-                    //     double score = doc_scores.get(doc) + cosineSim(doc, word, inverted_index, query, queryVL, docVL);
-
-                    // // System.out.println(score);
-                    //     doc_scores.put(doc, score);
-                    // }
 
                     double score = doc_scores.get(doc) + cosineSim(doc, word, inverted_index, query, queryVL, docVL);
 
@@ -160,8 +142,6 @@ class Retrieval {
 
                 docVL.put(doc, vl);
             }
-            //check if doc is in doc_scores table and add if not
-            //calculate cosineSim of doc and term and add to doc_score
             
         } 
 
@@ -271,7 +251,7 @@ class Retrieval {
             int rank = 1;
             for(String i : results.keySet()){
 
-                String entry = (queryNum + " " + i + " " + rank + " " + results.get(i) + " " + "my_search" + "\n");
+                String entry = (queryNum + " " + "Q0" + " " + i + " " + rank + " " + results.get(i) + " " + "my_search" + "\n");
                 WriteTextToFile(entry);
                 rank++;
 
