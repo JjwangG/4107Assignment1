@@ -163,7 +163,7 @@ public class Indexing {
     }
       
     public static void main() throws Exception {
-        mapMaker("test", "tokens.txt");
+        mapMaker("docs", "tokens.txt");
 
         try {
           BufferedWriter writerObj = new BufferedWriter(new FileWriter("invertedIndex.txt", false));
