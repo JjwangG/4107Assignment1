@@ -20,7 +20,7 @@ class Preprocessing{
         //data = removeStopWords(data);
         
         try {
-            BufferedWriter writerObj = new BufferedWriter(new FileWriter("tokens1.txt", false));
+            BufferedWriter writerObj = new BufferedWriter(new FileWriter("tokens.txt", false));
             for (String string : tokens) {
                 writerObj.write(string);
                 writerObj.newLine();
