@@ -3,25 +3,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.*;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 class Preprocessing{
 
-    public static void main() throws Exception{ 
-        
+    public static void main(String[]args) throws Exception{ 
+        long startTime = System.nanoTime();
         String data = readAllFiles();
-
-        
-        data = removeStopWords(data);
-        
         data = removePunct(data);
        
         String[] tokens = tokenize(data);
+        tokens = stopWords(tokens).toArray(String[]::new);
+        //data = removeStopWords(data);
         
-         
         try {
-            BufferedWriter writerObj = new BufferedWriter(new FileWriter("tokens.txt", false));
+            BufferedWriter writerObj = new BufferedWriter(new FileWriter("tokens1.txt", false));
             for (String string : tokens) {
                 writerObj.write(string);
                 writerObj.newLine();
@@ -29,6 +28,9 @@ class Preprocessing{
             writerObj.close();
             System.out.println("================================\n"
                     + "Tokens successfully generated");
+            long endTime   = System.nanoTime();
+            long totalTime = endTime - startTime;
+            System.out.println("Total time: "+totalTime);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,7 +64,13 @@ class Preprocessing{
     //output: all the punctuation removed
     public static String removePunct(String data) {
         //replace all the punctuation except for $, hypens, and decimal points
-        data = data.replaceAll("[^-/$a-z0-9\\d+\\.\\d+\\s]", "").replaceAll("(?!\\d)\\.(?!\\d)", "").replaceAll("\\s+", " ").replaceAll("/", " ");
+        //
+        Pattern p = Pattern.compile("[\\p{Punct}&&[^-/$a-z0-9\\d+\\.\\d+\\s]]+");
+        Pattern p2 = Pattern.compile("((?<![0-9])\\.)|(\\.(?![0-9]))");
+        //[^-/$a-z0-9\\d+\\.\\d+\\s]"
+        
+        data = p.matcher(data).replaceAll("");
+        data = p2.matcher(data).replaceAll("");
         return data;
     }
 
@@ -74,26 +82,31 @@ class Preprocessing{
         return unique;
     }
 
-    //input: string of all the texts
-    //output: string of the text with all the stop words removed
-    public static String removeStopWords(String data) throws Exception{
-        String [] stopArray = initialiseArray(); 
-        Pattern p;
-        for (String word : stopArray) { 
-            p = Pattern.compile("\\b"+ word+"\\b");
-            data = p.matcher(data).replaceAll("");
+    //input: string array of all the tokens
+    //output: string arr with all the stop words removed
+    public static ArrayList<String> stopWords(String[] data) throws Exception{
+        ArrayList<String> stopArray = initialiseArray();
+        ArrayList<String> tokens = new ArrayList<String>();
+
+        for (String word : data){
+            if (!(stopArray.contains(word))){
+                tokens.add(word);
+            }
         }
 
-        return data;
-    }
+        return tokens;
+    } 
 
     //initializes the stopwords array
-    private static String[] initialiseArray() throws Exception{
-        String data = "";
-        String[]arr;
-        data = new String(Files.readAllBytes(Paths.get("ss.txt")));
-        data = data.replace("\n", " ").replace("\r", " ");
-        arr = data.split(" ");
+    private static ArrayList<String> initialiseArray() throws Exception{
+        ArrayList<String> arr = new ArrayList<String>();
+        
+        BufferedReader br = new BufferedReader(new FileReader(new File("ss.txt")));
+        String line;
+        while ((line = br.readLine()) != null) {
+            arr.add(line);
+        }
+        br.close();
         return arr;
     }
 
