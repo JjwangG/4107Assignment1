@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class Indexing {
@@ -86,7 +87,7 @@ public class Indexing {
 
         while(matcher.find()){
             temp = matcher.group(1).toLowerCase();
-            temp = proc.removeStopWords(temp);
+            temp = (proc.removeStopWords(temp.split(""))).stream().map(Object::toString).collect(Collectors.joining(" "));
             temp = proc.removePunct(temp);
             temp2 += temp;
         }

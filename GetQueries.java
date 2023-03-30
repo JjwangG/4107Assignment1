@@ -1,6 +1,7 @@
 import java.nio.file.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Arrays;
 public class GetQueries {
@@ -50,7 +51,7 @@ public class GetQueries {
         for (int i = 0; i < q1.size(); i++){
             queries = q1.get(i) + " " + q2.get(i) + " " + q3.get(i);
             queries = p.removePunct(queries.toLowerCase());
-            queries = p.removeStopWords(queries);
+            queries = (p.removeStopWords(queries.split(""))).stream().map(Object::toString).collect(Collectors.joining(" "));
 
             list.add(queries);
         }

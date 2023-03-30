@@ -10,13 +10,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 class Preprocessing{
 
-    public static void main(String[]args) throws Exception{ 
+    public static void main() throws Exception{ 
         long startTime = System.nanoTime();
         String data = readAllFiles();
         data = removePunct(data);
        
         String[] tokens = tokenize(data);
-        tokens = stopWords(tokens).toArray(String[]::new);
+        tokens = removeStopWords(tokens).toArray(String[]::new);
         //data = removeStopWords(data);
         
         try {
@@ -84,7 +84,7 @@ class Preprocessing{
 
     //input: string array of all the tokens
     //output: string arr with all the stop words removed
-    public static ArrayList<String> stopWords(String[] data) throws Exception{
+    public static ArrayList<String> removeStopWords(String[] data) throws Exception{
         ArrayList<String> stopArray = initialiseArray();
         ArrayList<String> tokens = new ArrayList<String>();
 
