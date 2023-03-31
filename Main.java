@@ -18,7 +18,7 @@ class Main{
         inverted_index = i.getInvertedIndex();
         
 
-        Retrieval r = new Retrieval();
+        Retrieval2 r = new Retrieval2();
 
         r.main(inverted_index, docNum);
 
