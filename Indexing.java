@@ -87,7 +87,7 @@ public class Indexing {
 
         while(matcher.find()){
             temp = matcher.group(1).toLowerCase();
-            temp = (proc.removeStopWords(temp.split(""))).stream().map(Object::toString).collect(Collectors.joining(" "));
+            temp = (proc.removeStopWords(temp.split(" "))).stream().map(Object::toString).collect(Collectors.joining(" "));
             temp = proc.removePunct(temp);
             temp2 += temp;
         }

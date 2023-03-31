@@ -2,7 +2,9 @@ import java.util.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.*;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 
 class Retrieval {
 
@@ -225,11 +227,20 @@ class Retrieval {
 
         HashMap<String, Double> docVL = docVL(inverted_index);
 
-        GetQueries q = new GetQueries();
+        //GetQueries q = new GetQueries();
+        //String[] queries = q.readFile("queries.txt");
 
-        String[] queries = q.readFile("queries.txt");
+        ArrayList<String> tempArr = new ArrayList<String>();
+        BufferedReader reader = new BufferedReader(new FileReader("expanded_queries.txt"));
+        String line = reader.readLine();
 
-       
+        while (line != null) {
+            tempArr.add(line);
+            // read next line
+            line = reader.readLine();
+        }
+
+        String[] queries = tempArr.toArray(String[]::new);
         int queryNum = 1;
 
         for (String queryTerms : queries){
