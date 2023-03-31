@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 
-class Retrieval {
+class Retrieval2 {
 
     private static int numDoc;
 
