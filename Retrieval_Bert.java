@@ -8,7 +8,7 @@ import java.io.FileReader;
 /*
  * same as retrieval except it outputs the top 1000 relevant docs for each query 
  */
-class Retrieval {
+class Retrieval_Bert {
 
     private static int numDoc;
 
@@ -194,7 +194,7 @@ class Retrieval {
 
     public static void WriteTextToFile(String entry){
         String text = entry;
-        String filename = "Results.txt";
+        String filename = "input_bert.txt";
 
         try ( BufferedWriter writerObj = new BufferedWriter(new FileWriter(filename, true))) {
             writerObj.write(text);
@@ -264,7 +264,7 @@ class Retrieval {
             int rank = 1;
             for(String i : results.keySet()){
                 if (rank <= 1000){
-                    String entry = (i + " " + queryNum  +  "\n");
+                    String entry = (i +  "\n");
                     WriteTextToFile(entry);
                     rank++;
                 }
