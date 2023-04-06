@@ -263,11 +263,11 @@ class Retrieval {
 
             int rank = 1;
             for(String i : results.keySet()){
-
-                String entry = (queryNum + " "+ i + "\n");
-                WriteTextToFile(entry);
-                rank++;
-
+                if (rank <= 1000){
+                    String entry = (i + " " + queryNum  +  "\n");
+                    WriteTextToFile(entry);
+                    rank++;
+                }
             }
 
             queryNum++;
