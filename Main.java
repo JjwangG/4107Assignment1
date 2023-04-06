@@ -17,7 +17,6 @@ class Main{
 
         inverted_index = i.getInvertedIndex();
         
-
         QERetrieval r = new QERetrieval();
 
         r.main(inverted_index, docNum);
