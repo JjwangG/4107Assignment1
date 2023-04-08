@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Indexing {
 
@@ -25,7 +24,7 @@ public class Indexing {
     public static void mapMaker(String dirDocs, String dirTokens) throws Exception {
 
         // Read tokens file
-        List<String> tokens = readTokensFile(dirTokens);
+        HashMap<String, Integer> tokens = readTokensFile(dirTokens);
 
         // Read all files in directory and build inverted index
         File folder = new File(dirDocs);
@@ -34,16 +33,18 @@ public class Indexing {
             if (file.isFile()) {
                 List<String> subDocs = readSubDocsFromFile(file);
                 buildInvertedIndex(subDocs, tokens);
+                numDocs ++;
+                System.out.print(numDocs + " | ");
             }
         }
     }
 
-    private static List<String> readTokensFile(String dirTokens) throws IOException {
-        List<String> tokens = new ArrayList<>();
+    private static HashMap<String, Integer> readTokensFile(String dirTokens) throws IOException {
+      HashMap<String, Integer> tokens = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(new File(dirTokens)))) {
             String line;
             while ((line = br.readLine()) != null) {
-                tokens.add(line);
+                tokens.put(line, 0);
             }
         }
         return tokens;
@@ -64,12 +65,12 @@ public class Indexing {
         return subDocs;
     }
 
-    private static void buildInvertedIndex(List<String> subDocs, List<String> tokens) throws Exception {
+    private static void buildInvertedIndex(List<String> subDocs, HashMap<String, Integer> tokens) throws Exception {
         Preprocessing proc = new Preprocessing();
 
         for (int i = 0; i < subDocs.size(); i++) {
             String subDoc = subDocs.get(i).toLowerCase();
-            String subDocNo = extractSubDocNo(subDoc);
+            String subDocNo = extractSubDocNo(subDoc).toUpperCase();
 
             ArrayList<String> words = proc.removeStopWords(subDoc.split("\\s+"));
 
@@ -79,17 +80,17 @@ public class Indexing {
 
             Map<String, Double> frequencies = new HashMap<>();
             for (String word : words) {
-                if (tokens.contains(word)) {
+                if (tokens.containsKey(word)) {
                     frequencies.compute(word, (k, v) -> (v == null) ? 1 : v + 1);
                 }
             }
 
             for (Map.Entry<String, Double> entry : frequencies.entrySet()) {
-                String term = entry.getKey();
-                double frequency = entry.getValue() / (double) words.size();
+              String term = entry.getKey();
+              double frequency = entry.getValue() / (double) words.size();
 
-                Map<String, Double> docFrequencies = invertedIndex.computeIfAbsent(term, k -> new HashMap<>());
-                docFrequencies.put(subDocNo, frequency);
+              Map<String, Double> docFrequencies = invertedIndex.computeIfAbsent(term, k -> new HashMap<>());
+              docFrequencies.put(subDocNo, frequency);
             }
         }
     }
