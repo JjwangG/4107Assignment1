@@ -21,8 +21,9 @@ class Preprocessing{
         
         try {
             BufferedWriter writerObj = new BufferedWriter(new FileWriter("tokens.txt", false));
-            for (String string : tokens) {
-                writerObj.write(string);
+
+            for (int i = 1; i < tokens.length; i++) {
+                writerObj.write(tokens[i]);
                 writerObj.newLine();
             }
             writerObj.close();

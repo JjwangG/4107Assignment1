@@ -20,6 +20,7 @@ public class Indexing {
     private static HashMap<String, HashMap<String, Double>> invertedIndex = new HashMap<>();
 
     private static int numDocs;
+    private static int counter;
 
     public static void mapMaker(String dirDocs, String dirTokens) throws Exception {
 
@@ -33,8 +34,8 @@ public class Indexing {
             if (file.isFile()) {
                 List<String> subDocs = readSubDocsFromFile(file);
                 buildInvertedIndex(subDocs, tokens);
-                numDocs ++;
-                System.out.print(numDocs + " | ");
+                counter ++;
+                System.out.print(counter + " | ");
             }
         }
     }
@@ -62,6 +63,7 @@ public class Indexing {
             subDocs.add(matcher.group(1));
         }
         
+        numDocs = numDocs + subDocs.size();
         return subDocs;
     }
 
@@ -122,12 +124,14 @@ public class Indexing {
         BufferedWriter writerObj = new BufferedWriter(new FileWriter("invertedIndex.txt", false));
         writerObj.write(invertedIndex.toString());
         writerObj.close();
+        System.out.println("");
         System.out.println("================================\n"
                 + "Inverted Index successfully generated");
         long endTime   = System.nanoTime();
         long totalTime = endTime - startTime;
         totalTime = TimeUnit.SECONDS.convert(totalTime, TimeUnit.NANOSECONDS);
-        System.out.println("Total time: "+totalTime);
+        System.out.println("Total time: "+ totalTime);
+        System.out.println("Total docs: "+ numDocs);
     } catch (IOException e) {
         e.printStackTrace();
     }

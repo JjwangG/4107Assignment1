@@ -5,9 +5,9 @@ class Main{
     public static void main(String[] args) throws Exception{
 
         // Preprocessing
-        //Preprocessing p = new Preprocessing();
+        Preprocessing p = new Preprocessing();
 
-        //p.main();
+        p.main();
 
         Indexing i = new Indexing();
 
@@ -17,7 +17,7 @@ class Main{
 
         inverted_index = i.getInvertedIndex();
         
-        QERetrieval r = new QERetrieval();
+        Retrieval_Bert r = new Retrieval_Bert();
 
         r.main(inverted_index, docNum);
 
