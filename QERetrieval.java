@@ -192,9 +192,8 @@ class QERetrieval {
 
     public static void WriteTextToFile(String entry){
         String text = entry;
-        String filename = "Results.txt";
 
-        try ( BufferedWriter writerObj = new BufferedWriter(new FileWriter(filename, true))) {
+        try ( BufferedWriter writerObj = new BufferedWriter(new FileWriter("Results.txt", true))) {
             writerObj.write(text);
         } catch (IOException e) {
             e.printStackTrace();
@@ -262,9 +261,11 @@ class QERetrieval {
             int rank = 1;
             for(String i : results.keySet()){
 
-                String entry = (queryNum + " " + "Q0" + " " + i + " " + rank + " " + results.get(i) + " " + "my_search" + "\n");
-                WriteTextToFile(entry);
-                rank++;
+                if(rank <= 1000){
+                    String entry = (queryNum + " " + "Q0" + " " + i + " " + rank + " " + results.get(i) + " " + "my_search" + "\n");
+                    WriteTextToFile(entry);
+                    rank++;
+                }
 
             }
 
