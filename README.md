@@ -2,6 +2,6 @@
 
 Group 33
 
-Mailyn Puittinen
+Mai Lyn Puittinen
 Shreya Langhe
 Joanna Wang
