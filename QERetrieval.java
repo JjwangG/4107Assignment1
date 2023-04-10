@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.*;
@@ -191,9 +192,10 @@ class QERetrieval {
     
 
     public static void WriteTextToFile(String entry){
+        
         String text = entry;
 
-        try ( BufferedWriter writerObj = new BufferedWriter(new FileWriter("Results.txt", true))) {
+        try ( BufferedWriter writerObj = new BufferedWriter(new FileWriter("QEResults.txt", true))) {
             writerObj.write(text);
         } catch (IOException e) {
             e.printStackTrace();
@@ -219,10 +221,12 @@ class QERetrieval {
     }
 
     public static void main(HashMap<String, HashMap<String, Double>> inverted_index, int n) throws Exception{
-
+        
+        long startTime = System.nanoTime();
+        
         numDoc = n;
 
-        System.out.println(numDoc);
+        //System.out.println(numDoc);
 
         HashMap<String, Double> docVL = docVL(inverted_index);
 
@@ -270,19 +274,15 @@ class QERetrieval {
             }
 
             queryNum++;
-            
-            
 
         }
-
-        
-       
-
-        // System.out.print(docVL(inverted_index));
-
-
-
-
+        System.out.println("");
+        System.out.println("================================\n"
+                + "Expanded Query ranking successfully generated! Check QEResults.txt");
+        long endTime   = System.nanoTime();
+        long totalTime = endTime - startTime;
+        totalTime = TimeUnit.SECONDS.convert(totalTime, TimeUnit.NANOSECONDS);
+        System.out.println("Total time: "+ totalTime + " sec");
     }
     
 }

@@ -2,6 +2,7 @@ import java.nio.file.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -28,10 +29,11 @@ class Preprocessing{
             }
             writerObj.close();
             System.out.println("================================\n"
-                    + "Tokens successfully generated");
-            long endTime   = System.nanoTime();
-            long totalTime = endTime - startTime;
-            System.out.println("Total time: "+totalTime);
+                    + "Tokens successfully generated! Check tokens.txt");
+                    long endTime   = System.nanoTime();
+                    long totalTime = endTime - startTime;
+                    totalTime = TimeUnit.SECONDS.convert(totalTime, TimeUnit.NANOSECONDS);
+                    System.out.println("Total time: "+ totalTime + " sec");
         } catch (IOException e) {
             e.printStackTrace();
         }

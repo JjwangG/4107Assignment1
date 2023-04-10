@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -193,6 +194,7 @@ class Retrieval_Bert {
     
 
     public static void WriteTextToFile(String entry){
+
         String text = entry;
         String filename = "input_bert.txt";
 
@@ -223,9 +225,11 @@ class Retrieval_Bert {
 
     public static void main(HashMap<String, HashMap<String, Double>> inverted_index, int n) throws Exception{
 
+        long startTime = System.nanoTime();
+
         numDoc = n;
 
-        System.out.println(numDoc);
+        //System.out.println(numDoc);
 
         HashMap<String, Double> docVL = docVL(inverted_index);
 
@@ -271,18 +275,15 @@ class Retrieval_Bert {
             }
 
             queryNum++;
-            
-            
-
+          
         }
-
-        
-       
-
-        // System.out.print(docVL(inverted_index));
-
-
-
+        System.out.println("");
+        System.out.println("================================\n"
+                + "Original query ranking successfully generated! Check input_bert.txt");
+        long endTime   = System.nanoTime();
+        long totalTime = endTime - startTime;
+        totalTime = TimeUnit.SECONDS.convert(totalTime, TimeUnit.NANOSECONDS);
+        System.out.println("Total time: "+ totalTime + " sec");
 
     }
     

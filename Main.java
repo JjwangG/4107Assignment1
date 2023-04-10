@@ -17,9 +17,17 @@ class Main{
 
         inverted_index = i.getInvertedIndex();
         
-        Retrieval_Bert r = new Retrieval_Bert();
+        //Base Results 
+        Retrieval baseR = new Retrieval();
+        baseR.main(inverted_index, docNum);
+        
+        //Expanded Queries Results
+        QERetrieval qeR = new QERetrieval();
+        qeR.main(inverted_index, docNum);
 
-        r.main(inverted_index, docNum);
+        //BERT Results
+        Retrieval_Bert bertR = new Retrieval_Bert();
+        bertR.main(inverted_index, docNum);
 
 
 

@@ -35,7 +35,7 @@ public class Indexing {
                 List<String> subDocs = readSubDocsFromFile(file);
                 buildInvertedIndex(subDocs, tokens);
                 counter ++;
-                System.out.print(counter + " | ");
+                //System.out.print(counter + " | ");
             }
         }
     }
@@ -80,18 +80,19 @@ public class Indexing {
               words.set(j, proc.removePunct(words.get(j)));
             }
 
-            Map<String, Double> frequencies = new HashMap<>();
+            HashMap<String, Double> frequencies = new HashMap<>();
             for (String word : words) {
                 if (tokens.containsKey(word)) {
                     frequencies.compute(word, (k, v) -> (v == null) ? 1 : v + 1);
                 }
             }
 
-            for (Map.Entry<String, Double> entry : frequencies.entrySet()) {
+            //Normalize the frequencies 
+            for (HashMap.Entry<String, Double> entry : frequencies.entrySet()) {
               String term = entry.getKey();
               double frequency = entry.getValue() / (double) words.size();
 
-              Map<String, Double> docFrequencies = invertedIndex.computeIfAbsent(term, k -> new HashMap<>());
+              HashMap<String, Double> docFrequencies = invertedIndex.computeIfAbsent(term, k -> new HashMap<>());
               docFrequencies.put(subDocNo, frequency);
             }
         }
@@ -126,11 +127,11 @@ public class Indexing {
         writerObj.close();
         System.out.println("");
         System.out.println("================================\n"
-                + "Inverted Index successfully generated");
+                + "Inverted Index successfully generated! Check invertedIndex.txt");
         long endTime   = System.nanoTime();
         long totalTime = endTime - startTime;
         totalTime = TimeUnit.SECONDS.convert(totalTime, TimeUnit.NANOSECONDS);
-        System.out.println("Total time: "+ totalTime);
+        System.out.println("Total time: "+ totalTime + " sec");
         System.out.println("Total docs: "+ numDocs);
     } catch (IOException e) {
         e.printStackTrace();
